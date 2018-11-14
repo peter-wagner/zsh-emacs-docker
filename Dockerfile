@@ -1,8 +1,6 @@
-FROM ubuntu:18.10
+FROM ubuntu:18.10ap
 
 # Locales
-ENV LANGUAGE=en_US.UTF-8
-ENV LANG=en_US.UTF-8
 RUN apt-get update && apt-get install -y locales && locale-gen en_US.UTF-8
 
 # Common packages
@@ -10,14 +8,23 @@ RUN apt-get update && apt-get install -y \
       curl \
       git  \
       wget \
-      zsh 
+      zsh  \
+      emacs
 RUN chsh -s /usr/bin/zsh
 
-# Install docker
-RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D &&\
-      echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" > /etc/apt/sources.list.d/docker.list &&\
-      apt-get install -y apt-transport-https &&\
-      apt-get update &&\
-      apt-get install -y docker-engine
-RUN  curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.13.0/docker-compose-$(uname -s)-$(uname -m)" &&\
-     chmod +x /usr/local/bin/docker-compose
+# Install Oh-My-zsh
+RUN sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+# TODO setup zshrc by downloading it from github
+
+# Install Linuxbrew
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
+RUN brew install node
+echo node -v
+echo npm -v
+RUN brew install yarn
+
+RUN git config --global alias.co checkout
+RUN git config --global alias.br branch
+RUN git config --global alias.ci commit
+RUN git config --global alias.st status
